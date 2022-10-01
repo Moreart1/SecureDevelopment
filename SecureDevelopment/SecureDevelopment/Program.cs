@@ -1,11 +1,16 @@
+using AutoMapper;
 using CardStorageService.Data;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NLog.Web;
+using SecureDevelopment.Mappings;
 using SecureDevelopment.Models;
+using SecureDevelopment.Models.Requests;
+using SecureDevelopment.Models.Validators;
 using SecureDevelopment.Services;
 using SecureDevelopment.Services.Implementation;
 using System.Text;
@@ -17,6 +22,22 @@ namespace SecureDevelopment
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            #region Configure FluentValidator
+
+            builder.Services.AddScoped<IValidator<AuthenticationRequest>, AuthenticationRequestValidator>();          
+            builder.Services.AddScoped<IValidator<CreateCardRequest>, CardRequestValidator>();
+            builder.Services.AddScoped<IValidator<CreateClientRequest>, ClientRequestValidator>();
+
+            #endregion
+
+            #region Configure Mapper
+
+            var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MappingsProfile()));
+            var mapper = mapperConfiguration.CreateMapper();
+            builder.Services.AddSingleton(mapper);
+
+            #endregion
 
             builder.Services.Configure<DatabaseOptions>(options =>
             {
