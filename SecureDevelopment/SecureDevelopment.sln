@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PasswordUtilsClient", "Pass
 		{91458CB0-D74F-405B-80E6-CB00144E3119} = {91458CB0-D74F-405B-80E6-CB00144E3119}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patterns", "Patterns\Patterns.csproj", "{846CA06A-3779-4938-992A-4D2DFE6EB37A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patterns", "Patterns\Patterns.csproj", "{846CA06A-3779-4938-992A-4D2DFE6EB37A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardStorageClient", "CardStorageClient\CardStorageClient.csproj", "{CF1CA6D9-61F3-4C0F-9F7D-EB37A0C1FC07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{846CA06A-3779-4938-992A-4D2DFE6EB37A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{846CA06A-3779-4938-992A-4D2DFE6EB37A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{846CA06A-3779-4938-992A-4D2DFE6EB37A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF1CA6D9-61F3-4C0F-9F7D-EB37A0C1FC07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF1CA6D9-61F3-4C0F-9F7D-EB37A0C1FC07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF1CA6D9-61F3-4C0F-9F7D-EB37A0C1FC07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF1CA6D9-61F3-4C0F-9F7D-EB37A0C1FC07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
