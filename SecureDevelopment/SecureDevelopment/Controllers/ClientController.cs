@@ -1,4 +1,7 @@
-﻿using CardStorageService.Data;
+﻿using AutoMapper;
+using CardStorageService.Data;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SecureDevelopment.Models.Requests;
@@ -12,13 +15,19 @@ namespace SecureDevelopment.Controllers
     {
         private readonly IClientRepositoryService _clientRepositoryService;
         private readonly ILogger<CardController> _logger;
+        private readonly IValidator<CreateClientRequest> _clientValidator;
+        private readonly IMapper _mapper;
 
         public ClientController(
           ILogger<CardController> logger,
-          IClientRepositoryService clientRepositoryService)
+          IClientRepositoryService clientRepositoryService,
+          IValidator<CreateClientRequest> clientValidator,
+          IMapper mapper)
         {
             _logger = logger;
             _clientRepositoryService = clientRepositoryService;
+            _clientValidator = clientValidator;
+            _mapper = mapper;
         }
 
         [HttpPost("create")]
@@ -27,12 +36,17 @@ namespace SecureDevelopment.Controllers
         {
             try
             {
-                var clientId = _clientRepositoryService.Create(new Client
-                {
-                    FirstName = request.FirstName,
-                    Surname = request.Surname,
-                    Patronymic = request.Patronymic
-                });
+                ValidationResult validatorResult = _clientValidator.Validate(request);
+                if (!validatorResult.IsValid)
+                    return BadRequest(validatorResult.ToDictionary());
+
+                var clientId = _clientRepositoryService.Create(_mapper.Map<Client>(request));
+                //var clientId = _clientRepositoryService.Create(new Client
+                //{
+                //    FirstName = request.FirstName,
+                //    Surname = request.Surname,
+                //    Patronymic = request.Patronymic
+                //});
                 return Ok(new CreateClientResponse
                 {
                     ClientId = clientId

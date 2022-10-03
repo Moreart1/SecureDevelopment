@@ -1,4 +1,7 @@
-﻿using CardStorageService.Data;
+﻿using AutoMapper;
+using CardStorageService.Data;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SecureDevelopment.Models;
@@ -13,12 +16,18 @@ namespace SecureDevelopment.Controllers
     {
         private readonly ILogger<CardController> _logger;
         private readonly ICardRepositoryService _cardRepositoryService;
+        private readonly IValidator<CreateCardRequest> _cardValidator;
+        private readonly IMapper _mapper;
 
         public CardController(ILogger<CardController> logger,
-           ICardRepositoryService cardRepositoryService)
+           ICardRepositoryService cardRepositoryService,
+           IValidator<CreateCardRequest> cardValidator,
+           IMapper mapper)
         {
             _logger = logger;
             _cardRepositoryService = cardRepositoryService;
+            _cardValidator = cardValidator;
+            _mapper = mapper;
         }
 
         [HttpPost("create")]
@@ -27,13 +36,18 @@ namespace SecureDevelopment.Controllers
         {
             try
             {
-                var cardId = _cardRepositoryService.Create(new Card
-                {                  
-                    ClientId = request.ClientId,
-                    CardNo = request.CardNo,
-                    ExpDate = request.ExpDate,
-                    CVV2 = request.CVV2
-                });
+                ValidationResult validationResult = _cardValidator.Validate(request);
+                if (!validationResult.IsValid)
+                    return BadRequest(validationResult.ToDictionary());
+
+                var cardId = _cardRepositoryService.Create(_mapper.Map<Card>(request));
+                //var cardId = _cardRepositoryService.Create(new Card
+                //{                  
+                //    ClientId = request.ClientId,
+                //    CardNo = request.CardNo,
+                //    ExpDate = request.ExpDate,
+                //    CVV2 = request.CVV2
+                //});
                 return Ok(new CreateCardResponse
                 {
                     CardId = cardId.ToString()
