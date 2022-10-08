@@ -13,6 +13,7 @@ using SecureDevelopment.Models.Requests;
 using SecureDevelopment.Models.Validators;
 using SecureDevelopment.Services;
 using SecureDevelopment.Services.Implementation;
+using System.Net;
 using System.Text;
 
 namespace SecureDevelopment
@@ -22,6 +23,22 @@ namespace SecureDevelopment
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+
+            #region Configure gRPC
+
+
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.Listen(IPAddress.Any, 5001, listenOptions =>
+                {
+                    listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+                });
+            });
+
+            builder.Services.AddGrpc();
+
+            #endregion
 
             #region Configure FluentValidator
 
@@ -137,8 +154,25 @@ namespace SecureDevelopment
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseHttpLogging();
 
+
+            // MICROSOFT обещал поправить в .NET 7
+            app.UseWhen(c => c.Request.ContentType != "application/grpc",
+                builder =>
+                {
+                    builder.UseHttpLogging();
+                }
+            );
+
+            // app.UseHttpLogging();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGrpcService<ClientService>();
+                endpoints.MapGrpcService<CardService>();
+
+            });
+          
             app.MapControllers();
 
             app.Run();
